@@ -94,9 +94,9 @@ class ObjectiveFunction:
             for xi in self._X:
                 if xi[-1] == 1:
                     # compute forward and cache the results for re-use in backward
-                    fwd.append(self._neural_network1.forward(xi, weights))
+                    fwd.append(self._neural_network1.forward(xi[:-1], weights))
                 elif xi[-1] == -1:
-                    fwd.append(self._neural_network2.forward(xi, weights))
+                    fwd.append(self._neural_network2.forward(xi[:-1], weights))
                 else:
                     raise NotImplementedError
                 # a copy avoids keeping a reference to the same array, so we are sure we have
@@ -122,7 +122,6 @@ class BinaryObjectiveFunction(ObjectiveFunction):
         if num_outputs != 1:
             raise ValueError(f"Number of outputs is expected to be 1, got {num_outputs}")
 
-        #         print("x: ", self._X.shape,self._X[-1])
         # output must be of shape (N, 1), where N is a number of samples
         output = self._neural_network_forward(weights)
         #         output = (output + np.ones(output.shape)) * 0.5 # map to 0-1
@@ -130,10 +129,10 @@ class BinaryObjectiveFunction(ObjectiveFunction):
         for xi in self._X:
             if xi[-1] == 1:
                 # weight grad is of shape (N, 1, num_weights)
-                _, wg = self._neural_network1.backward(xi, weights)
+                _, wg = self._neural_network1.backward(xi[:-1], weights)
             elif xi[-1] == -1:
                 # weight grad is of shape (N, 1, num_weights)
-                _, wg = self._neural_network2.backward(xi, weights)
+                _, wg = self._neural_network2.backward(xi[:-1], weights)
             else:
                 raise NotImplementedError
             weight_grad.append(wg[0])

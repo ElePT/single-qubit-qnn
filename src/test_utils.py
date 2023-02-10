@@ -8,7 +8,7 @@ def get_metrics(X, qnn, ws):
     y_tensor = []
 
     for x in X:
-        out = qnn.forward(x, ws)
+        out = qnn.forward(x[:-1], ws)
         label = 0
         if out > 0:
             label = 1
